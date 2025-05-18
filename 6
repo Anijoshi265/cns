@@ -1,0 +1,59 @@
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Scanner;
+
+public class AES {
+    // Convert HEX string to byte array
+    public static byte[] hexToBytes(String hex) {
+        int len = hex.length();
+        byte[] result = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            result[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
+                    + Character.digit(hex.charAt(i + 1), 16));
+        }
+        return result;
+    }
+
+    // Convert byte array to HEX string
+    public static String bytesToHex(byte[] bytes) {
+        StringBuilder hex = new StringBuilder();
+        for (byte b : bytes) {
+            hex.append(String.format("%02X", b));
+        }
+        return hex.toString();
+    }
+
+    public static void main(String[] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input plaintext and 128-bit key (in HEX)
+        System.out.print("Enter plaintext: ");
+        String plainText = scanner.nextLine();
+        
+        System.out.print("Enter 128-bit key in HEX (32 hex digits): ");
+        String hexKey = scanner.nextLine();
+
+        // Validate key length
+        if (hexKey.length() != 32) {
+            System.out.println("Invalid key length. 128-bit key must be 32 hex characters.");
+            return;
+        }
+
+        // Convert HEX key to bytes
+        byte[] keyBytes = hexToBytes(hexKey);
+        SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+
+        // Set up AES cipher with ECB mode and PKCS5Padding
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+
+        // Encrypt the plaintext
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encrypted = cipher.doFinal(plainText.getBytes("UTF-8"));
+        System.out.println("Encrypted (Hex): " + bytesToHex(encrypted));
+
+        // Decrypt the ciphertext
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] decrypted = cipher.doFinal(encrypted);
+        System.out.println("Decrypted Text: " + new String(decrypted, "UTF-8"));
+    }
+}
