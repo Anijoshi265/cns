@@ -1,0 +1,53 @@
+import java.math.BigInteger;
+import java.util.Scanner;
+
+public class RSA {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        // Input two prime numbers (p and q)
+        System.out.print("Enter first prime number (p): ");
+        BigInteger p = new BigInteger(sc.nextLine());
+        System.out.print("Enter second prime number (q): ");
+        BigInteger q = new BigInteger(sc.nextLine());
+        
+        // Calculate n = p * q and φ(n) = (p-1) * (q-1)
+        BigInteger n = p.multiply(q);
+        BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
+        
+        // Input public key exponent e
+        BigInteger e;
+        while (true) {
+            System.out.print("Enter public key exponent (e): ");
+            e = new BigInteger(sc.nextLine());
+            
+            // Check if e is valid: 1 < e < φ(n) and gcd(e, φ(n)) = 1
+            if (e.gcd(phi).equals(BigInteger.ONE) && e.compareTo(phi) < 0 && e.compareTo(BigInteger.ONE) > 0) {
+                break;
+            }
+            System.out.println("Invalid e. Try again (must be 1 < e < φ(n), and gcd(e, φ(n)) = 1)");
+        }
+        
+        // Compute the private key exponent d: d = e^(-1) mod φ(n)
+        BigInteger d = e.modInverse(phi);
+        
+        // Show public and private keys
+        System.out.println("\nPublic Key (e, n): (" + e + ", " + n + ")");
+        System.out.println("Private Key (d, n): (" + d + ", " + n + ")");
+        
+        // Input plaintext as a number (must be less than n)
+        System.out.print("\nEnter message as a number less than " + n + ": ");
+        BigInteger message = new BigInteger(sc.nextLine());
+        
+        // Encrypt the message: C = M^e mod n
+        BigInteger cipher = message.modPow(e, n);
+        System.out.println("Encrypted Cipher Text: " + cipher);
+        
+        // Decrypt the message: M = C^d mod n
+        BigInteger decrypted = cipher.modPow(d, n);
+        System.out.println("Decrypted Message: " + decrypted);
+        
+        sc.close();
+    }
+}
