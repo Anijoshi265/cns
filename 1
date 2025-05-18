@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main() {
+    char str[100];
+    printf("string: ");
+    fgets(str, sizeof(str), stdin);
+    str[strcspn(str, "\n")] = 0;
+    printf("nariginal string: %s\n", str);
+
+    printf("string with 'and' of 127:\n");
+    for (int i = 0; str[i] != '\0'; i++) {
+        int result_int = str[i] & 127;
+        char result_char = (char)result_int;
+        printf("Characters: %c, Result Int: %d, Result Char: '%c'\n", str[i], result_int, result_char);
+    }
+
+    printf("\nstring with 'or' of 127:\n");
+    for (int i = 0; str[i] != '\0'; i++) {
+        int result_int = str[i] | 127;
+        char result_char = (char)result_int;
+        printf("Characters: %c, Result Int: %d, Result Char: '%c'\n", str[i], result_int, result_char);
+    }
+
+    printf("\nstring with 'xor' of 127:\n");
+    for (int i = 0; str[i] != '\0'; i++) {
+        int result_int = str[i] ^ 127;
+        char result_char = (char)result_int;
+        printf("Characters: %c, Result Int: %d, Result Char: '%c'\n", str[i], result_int, result_char);
+    }
+    return 0;
+}
