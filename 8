@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diffie-Hellman Key Exchange</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        .section {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Diffie-Hellman Key Exchange Demo</h2>
+
+    <div class="section">
+        <label>Prime number (p):</label>
+        <input type="number" id="prime" value="23">
+
+        <label>Primitive root (g):</label>
+        <input type="number" id="base" value="5">
+
+        <label>Alice's private key (a):</label>
+        <input type="number" id="alicePrivate" value="6">
+
+        <label>Bob's private key (b):</label>
+        <input type="number" id="bobPrivate" value="15">
+
+        <button onclick="computeDH()">Compute Shared Keys</button>
+    </div>
+
+    <div class="section" id="results">
+        <strong>Results:</strong>
+        <p id="alicePublic"></p>
+        <p id="bobPublic"></p>
+        <p id="aliceShared"></p>
+        <p id="bobShared"></p>
+    </div>
+
+    <script>
+        function modPow(base, exponent, mod) {
+            let result = 1;
+            base = base % mod;
+            while (exponent > 0) {
+                if (exponent % 2 === 1)
+                    result = (result * base) % mod;
+                exponent = Math.floor(exponent / 2);
+                base = (base * base) % mod;
+            }
+            return result;
+        }
+
+        function computeDH() {
+            const p = parseInt(document.getElementById("prime").value);
+            const g = parseInt(document.getElementById("base").value);
+            const a = parseInt(document.getElementById("alicePrivate").value);
+            const b = parseInt(document.getElementById("bobPrivate").value);
+
+            const A = modPow(g, a, p); // Alice's public key
+            const B = modPow(g, b, p); // Bob's public key
+
+            const sharedKeyA = modPow(B, a, p); // Alice computes shared key
+            const sharedKeyB = modPow(A, b, p); // Bob computes shared key
+
+            document.getElementById("alicePublic").innerText = `Alice's Public Key (A): ${A}`;
+            document.getElementById("bobPublic").innerText = `Bob's Public Key (B): ${B}`;
+            document.getElementById("aliceShared").innerText = `Alice's Shared Key: ${sharedKeyA}`;
+            document.getElementById("bobShared").innerText = `Bob's Shared Key: ${sharedKeyB}`;
+        }
+    </script>
+</body>
+</html>
+
+
+
+
